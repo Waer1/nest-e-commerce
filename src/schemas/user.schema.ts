@@ -1,4 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { genSalt, hash } from 'bcrypt';
+import { IsNotEmpty } from 'class-validator';
+import { Document } from 'mongoose';
 
 @Schema()
 export class Address {
@@ -22,14 +25,14 @@ export class Address {
 }
 
 @Schema()
-export class User {
+export class User extends Document {
   @Prop({ required: true })
   name: string;
 
   @Prop({ required: true })
   email: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, select: false })
   password: string;
 
   @Prop({ default: Date.now })
@@ -46,3 +49,19 @@ export class User {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.pre('save', async function (next: any) {
+  try {
+    if (!this.isModified('password')) {
+      return next();
+    }
+
+    const user = this as User;
+    const saltOrRounds = parseInt(process.env.SALT || '10');
+    const hashed = await hash(user.password, saltOrRounds);
+    user.password = hashed;
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+});

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 import { User } from './user.schema';
 import { Product } from './product.schema';
 
@@ -13,7 +13,7 @@ class ProductOrder {
 }
 
 @Schema()
-export class Order {
+export class Order extends Document {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   owner: User;
 
@@ -21,7 +21,7 @@ export class Order {
   totalPrice: number;
 
   @Prop({
-    type: ProductOrder,
+    type: [ProductOrder],
     default: [],
   })
   Products: ProductOrder[];

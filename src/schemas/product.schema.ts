@@ -3,7 +3,7 @@ import { User } from './user.schema';
 import mongoose from 'mongoose';
 
 @Schema()
-export class Product {
+export class Product extends Document {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   owner: User;
 
