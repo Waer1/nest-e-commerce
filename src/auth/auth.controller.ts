@@ -4,6 +4,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { UserService } from 'src/shared/user/user.service';
 import { AuthService } from './auth.service';
 import { User } from 'src/utils/user.decorator';
+import { SellerGuard } from 'src/guards/seller.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -13,12 +14,11 @@ export class AuthController {
   ) {}
 
   @Get()
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), SellerGuard)
   async findAll(@User() user: any) {
     console.log(user);
     return await this.userService.findAll();
   }
-  
 
   @Post('login')
   async login(@Body() userDto: userLoginDto) {
