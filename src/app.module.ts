@@ -3,8 +3,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { SharedModule } from './shared/shared.module';
 import { AuthModule } from './auth/auth.module';
-import { ProductController } from './product/product.controller';
-import { ProductService } from './product/product.service';
 import { ProductModule } from './product/product.module';
 
 @Module({
@@ -17,7 +15,7 @@ import { ProductModule } from './product/product.module';
     AuthModule,
     ProductModule,
   ],
-  controllers: [ProductController],
-  providers: [ProductService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

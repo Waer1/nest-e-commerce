@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { User } from './user.schema';
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
 @Schema()
 export class Product extends Document {
@@ -24,3 +24,12 @@ export class Product extends Document {
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
+
+// // Pre-save middleware to set the owner
+// ProductSchema.pre('save', async function (next) {
+//   if (!this.owner) {
+//     const currentUser = getCurrentUser();
+//     this.owner = currentUser;
+//   }
+//   next();
+// });
