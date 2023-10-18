@@ -20,7 +20,6 @@ export class ProductService {
   }
 
   async addProduct(productDto: ProductDto, user: User): Promise<Product> {
-    console.log(user);
     const product = await this.productModel.create({
       owner: user,
       createdAt: new Date(),
@@ -38,10 +37,7 @@ export class ProductService {
     edits: UpdateProductDto,
     user: User,
   ): Promise<Product> {
-    const updatedProduct = await this.productModel.findByIdAndUpdate(
-      productId,
-      { ...edits, updatedAt: new Date() },
-    );
+    const updatedProduct = await this.productModel.findById(productId);
 
     if (!updatedProduct) {
       throw new NotFoundException(`Product with ID ${productId} not found.`);
@@ -52,6 +48,8 @@ export class ProductService {
         `Product with ID ${productId} not found for this user.`,
       );
     }
+
+    await updatedProduct.updateOne(edits);
 
     return updatedProduct;
   }
@@ -68,6 +66,8 @@ export class ProductService {
         `Product with ID ${productId} not found for this user.`,
       );
     }
+
+    await deletedProduct.deleteOne();
 
     return deletedProduct;
   }
