@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { genSalt, hash } from 'bcrypt';
-import { IsNotEmpty } from 'class-validator';
+import { hash } from 'bcrypt';
 import { Document } from 'mongoose';
 
 @Schema()

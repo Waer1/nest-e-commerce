@@ -12,7 +12,7 @@ import { ProductService } from './product.service';
 import { ProductDto, UpdateProductDto } from './product.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { SellerGuard } from 'src/guards/seller.guard';
-import { User } from 'src/utils/user.decorator';
+import { UserDecorator } from 'src/utils/user.decorator';
 import { User as userType } from 'src/schemas/user.schema';
 
 @Controller('product')
@@ -26,13 +26,16 @@ export class ProductController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'), SellerGuard)
-  async AddProduct(@Body() productDto: ProductDto, @User() user: userType) {
+  async AddProduct(
+    @Body() productDto: ProductDto,
+    @UserDecorator() user: userType,
+  ) {
     return await this.productService.addProduct(productDto, user);
   }
 
   @Get('mine')
   @UseGuards(AuthGuard('jwt'), SellerGuard)
-  async listMine(@User() user: userType) {
+  async listMine(@UserDecorator() user: userType) {
     return await this.productService.getAllProductsBySeller(user._id);
   }
 
@@ -51,14 +54,17 @@ export class ProductController {
   async updateProduct(
     @Param('id') id: string,
     @Body() productDto: UpdateProductDto,
-    @User() user: userType,
+    @UserDecorator() user: userType,
   ) {
     return await this.productService.updateProduct(id, productDto, user);
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'), SellerGuard)
-  async deleteProduct(@Param('id') id: string, @User() user: userType) {
+  async deleteProduct(
+    @Param('id') id: string,
+    @UserDecorator() user: userType,
+  ) {
     return await this.productService.deleteProduct(id, user);
   }
 }

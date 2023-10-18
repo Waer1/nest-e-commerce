@@ -4,30 +4,45 @@ import { User } from './user.schema';
 import { Product } from './product.schema';
 
 @Schema()
-class ProductOrder {
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Product' })
+export class ProductOrder {
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: Product.name,
+    required: true,
+  })
   product: Product;
 
-  @Prop({ default: 0 })
+  @Prop({ default: 1 })
   quantity: number;
 }
+const ProductOrderSchema = SchemaFactory.createForClass(ProductOrder);
 
 @Schema()
 export class Order extends Document {
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: User.name })
   owner: User;
 
   @Prop({ default: 0 })
   totalPrice: number;
 
   @Prop({
-    type: [ProductOrder],
+    type: [ProductOrderSchema],
     default: [],
   })
-  Products: ProductOrder[];
+  products: ProductOrder[];
 
   @Prop({ default: Date.now })
   createdAt: Date;
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);
+
+OrderSchema.pre('save', async function (next: any) {
+  const order = this as Order;
+  let totalPrice = 0;
+  order.products.forEach((product) => {
+    totalPrice += product.quantity * product.product.price;
+  });
+  order.totalPrice = totalPrice;
+  next();
+});
